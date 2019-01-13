@@ -34,7 +34,7 @@ namespace WebApiBooks.Controllers
         public IActionResult Post([FromBody]Book book)
         {
             book = bookService.Insert(book);
-            return new JsonResult(book) { StatusCode = 201 };
+            return new JsonResult(book) { StatusCode = 201 }; // Created
         }
 
         [Authorize]

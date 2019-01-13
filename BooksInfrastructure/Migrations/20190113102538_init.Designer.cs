@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BooksInfrastructure.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20190108073203_init")]
+    [Migration("20190113102538_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,11 @@ namespace BooksInfrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Accounts");
+
+                    b.HasData(
+                        new { Id = 1, About = "About user1", Login = "user1", Password = "1111", Role = "user" },
+                        new { Id = 2, About = "About admin1", Login = "admin1", Password = "1111", Role = "admin" }
+                    );
                 });
 
             modelBuilder.Entity("BooksAppCore.Models.AccountToken", b =>

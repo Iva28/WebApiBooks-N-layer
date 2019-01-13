@@ -186,6 +186,30 @@
             });
         }
 
+        function deleteBook(id) {
+            $.ajax({
+                url: "http://localhost:50030/api/book/" + id,
+                method: "DELETE",
+                contentType: "application/json",
+                headers: {
+                    "Authorization": "Bearer " + localStorage["access_token"]
+                },
+                success: function (book) {
+                    getAllBooks();
+                }
+                statusCode: {
+                    401: function () {
+                        if (localStorage["refresh_token"] == undefined) {
+                            console.log("401");
+                        }
+                        else {
+                            updateToken(deleteBook(id));
+                        }
+                    }
+                }
+            });
+        }
+        
         function submitBookForm() {
             event.preventDefault();
             var method, data;

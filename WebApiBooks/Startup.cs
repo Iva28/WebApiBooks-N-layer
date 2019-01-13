@@ -14,6 +14,8 @@ using BooksInfrastructure.EF;
 using Microsoft.EntityFrameworkCore;
 using BooksAppCore.Repositories;
 using BooksInfrastructure.Repositories;
+using System.Data.Common;
+using System.Data.SqlClient;
 
 namespace WebApiBooks
 {
@@ -29,17 +31,24 @@ namespace WebApiBooks
 
         public IConfiguration Configuration { get; }
 
+        public DbConnection DbConnection => new SqlConnection(Configuration.GetConnectionString("MyConnection"));
+
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MyDbContext>(opts =>
-            {
-                opts.UseSqlServer(Configuration.GetConnectionString("MyConnection"));
-            });
+            //services.AddDbContext<MyDbContext>(opts =>
+            //{
+            //    opts.UseSqlServer(Configuration.GetConnectionString("MyConnection"));
+            //});
 
-            services.AddTransient<IJwtService, JwtService>(); // DbContext don't work with Singleton
+            //services.AddScoped<DbConnection>((conn) => DbConnection);
+            //services.AddDbContext<MyDbContext>(opts => { opts.UseSqlServer(DbConnection); });
+
+            services.AddTransient<IJwtService, JwtService>();  
             services.AddTransient<IBookService, BookService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IBookRepository, BookRepository>();
+            services.AddTransient<IAccountRepository, AccountRepository>();
 
             services.Configure<AuthOptions>(Configuration);
             services.Configure<AuthOptions>(options => Configuration.GetSection("AuthOptions").Bind(options));

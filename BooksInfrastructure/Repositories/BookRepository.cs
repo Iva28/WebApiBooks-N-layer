@@ -1,54 +1,100 @@
 ﻿using BooksAppCore.Models;
 using BooksAppCore.Repositories;
-using BooksInfrastructure.EF;
+using Dapper.FastCrud;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BooksInfrastructure.Repositories
 {
     public class BookRepository : IBookRepository
     {
-        private MyDbContext context;
+        //private MyDbContext context;
+       
+        private readonly IConfiguration _config;
 
-        public BookRepository(MyDbContext context)
+        public BookRepository(IConfiguration config)
         {
-            this.context = context;
+            _config = config;
         }
 
-        public List<Book> Select()
+        public IDbConnection Connection
         {
-            return context.Books.ToList();
+            get
+            {
+                return new SqlConnection(_config.GetConnectionString("MyConnection"));
+            }
         }
 
-        public Book Select(int id)
+        public async Task<List<Book>> Select()
         {
-            return context.Books.Find(id);
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                 var res = await dbConnection.FindAsync<Book>();
+                 return res.ToList();
+            }
+            //return context.Books.ToList(); 
         }
 
-        public int Insert(Book book)
+        public async Task<Book> Select(int id)
         {
-            context.Books.Add(book);
-            return context.SaveChanges();
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                return await dbConnection.GetAsync<Book>(new Book { Id = id });
+            }
+            //return context.Books.Find(id);
         }
 
-        public int Update(Book book)
+        public async Task Insert(Book book)
         {
-            Book editBook = context.Books.Find(book.Id);
-            editBook.Title = book.Title;
-            editBook.Year = book.Year;
-            return context.SaveChanges();
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                await dbConnection.InsertAsync(book);
+            }
+            //context.Books.Add(book);
+            //return context.SaveChanges();
         }
 
-        public int Delete(Book book)
+        public async Task<bool> Update(Book book)
         {
-            context.Books.Remove(book);
-            return context.SaveChanges();
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                return await dbConnection.UpdateAsync<Book>(book);
+            }
+
+            //Book editBook = context.Books.Find(book.Id);
+            //editBook.Title = book.Title;
+            //editBook.Year = book.Year;
+            //return context.SaveChanges();
         }
 
-        public int Delete(int id)
+        public async Task<bool> Delete(Book book)
         {
-            context.Books.Remove(context.Books.Find(id));
-            return context.SaveChanges();
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                return await dbConnection.DeleteAsync<Book>(book);
+            }
+            //context.Books.Remove(book);
+            //return context.SaveChanges();
+        }
+
+        public async Task<bool> Delete(int id)
+        {
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                return await dbConnection.DeleteAsync(new Book { Id = id });
+            }
+            //context.Books.Remove(context.Books.Find(id));
+            //return context.SaveChanges();
         }
     }
 }
