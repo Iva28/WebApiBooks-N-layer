@@ -14,7 +14,8 @@ namespace BooksAppCore.Services
         {
             this.bookRepository = bookRepository;
 
-            if (bookRepository.Select().Result.Count() == 0) {
+            if (bookRepository.Select().Result.Count() == 0)
+            {
                 var books = new List<Book>() {
                 new Book() { Title = "Book 1", Year = 1990,
                     Authors = new List<Author>() { new Author() { FirstName = "Author", LastName = "One" }, new Author() { FirstName = "Author", LastName = "Two" } } },
@@ -25,7 +26,8 @@ namespace BooksAppCore.Services
                 new Book() { Title = "Book 4", Year = 1993 },
                 new Book() { Title = "Book 5", Year = 1994 }
                 };
-                foreach (var book in books) {
+                foreach (var book in books)
+                {
                     bookRepository.Insert(book);
                 }
             }
@@ -33,7 +35,7 @@ namespace BooksAppCore.Services
 
         public List<Book> Get()
         {
-            return bookRepository.Select().Result;
+            return bookRepository.Select().Result.ToList();
         }
 
         public Book Get(int id)
@@ -65,7 +67,17 @@ namespace BooksAppCore.Services
 
         public List<Author> GetAuthors(int id)
         {
-            return bookRepository.Select(id).Result?.Authors;
+            return bookRepository.Select(id).Result?.Authors.ToList();
+        }
+
+        public List<Book> SearchBook(string str)
+        {
+            return bookRepository.SearchBooks(str).Result.ToList();
+        }
+
+        public List<Author> SearchAuthor(string str)
+        {
+            return bookRepository.SearchAuthors(str).Result.ToList();
         }
     }
 }

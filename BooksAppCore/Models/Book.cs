@@ -12,9 +12,9 @@ namespace BooksAppCore.Models
         public string Title { get; set; }
 
         [Required(ErrorMessage = "Year is required")]
-        [Range(1900, 2018, ErrorMessage = "Range is 1990 - 2018")]
+        [Range(1900, 2018, ErrorMessage = "Range is 1900 - 2018")]
         public int Year { get; set; }
 
-        public List<Author> Authors { get; set; }
+        public ICollection<Author> Authors { get; set; } = new List<Author>();
     }
 }

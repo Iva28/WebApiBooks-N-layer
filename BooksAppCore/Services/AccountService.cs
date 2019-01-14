@@ -5,6 +5,7 @@ using System.Security.Claims;
 using BooksAppCore.DTO;
 using BooksAppCore.Models;
 using BooksAppCore.Repositories;
+using System.Linq;
 
 namespace BooksAppCore.Services
 {
@@ -13,46 +14,32 @@ namespace BooksAppCore.Services
         private AuthOptions authOptions;
         private IJwtService jwtService;
 
-       // private List<Account> accounts;
-       // private List<AccountToken> accountTokens;
-
         private IAccountRepository accountRepository;
 
         public AccountService(IOptions<AuthOptions> authOptions, IJwtService jwtService, IAccountRepository accountRepository)
         {
             this.authOptions = authOptions.Value;
             this.jwtService = jwtService;
-            this.accountRepository = accountRepository;
-
-            //accounts = new List<Account>()
-            //{
-            //    new Account() { Id = 1, Login = "user1", Password = "1111", Role = "user", About = "About user1" },
-            //    new Account() { Id = 2, Login = "admin1", Password = "1111", Role = "admin", About = "About admin1" },
-            //};
-            //accountTokens = new List<AccountToken>();
+            this.accountRepository = accountRepository;           
         }
 
         public AccountResponse SignIn(string login, string pswd)
         {
-           // Account acc = accounts.Find(u => u.Login == login && u.Password == pswd);
-            Account acc = accountRepository.Get(login, pswd);
+            Account acc = accountRepository.Get(login, pswd).Result;
             if (acc == null) return null;
             return Authorize(acc);
         }
 
         public AccountResponse UpdateToken(string refreshToken)
         {
-           //AccountToken accToken = accountTokens.Find(x => x.RefreshToken == refreshToken);
-            AccountToken accToken = accountRepository.GetToken(refreshToken);
+            AccountToken accToken = accountRepository.GetToken(refreshToken).Result;
             if (accToken == null || accToken.RefreshExpires <= DateTime.Now) return null;
-            //Account acc = accounts.Find(a => a.Id == accToken.AccountId);
-            Account acc = accountRepository.GetById(accToken.AccountId);
+            Account acc = accountRepository.GetById(accToken.AccountId).Result;
             return Authorize(acc);
         }
 
         public void SignOut(int id)
         {
-           // accountTokens.RemoveAll(x => x.AccountId == id);
             accountRepository.DeleteAllTokens(id);
         }
 
@@ -72,9 +59,7 @@ namespace BooksAppCore.Services
                 RefreshExpires = DateTime.Now.AddMinutes(authOptions.RefreshLifetime)
             };
 
-            //accountTokens.RemoveAll(x => x.AccountId == acc.Id);
             accountRepository.DeleteAllTokens(acc.Id);
-            //accountTokens.Add(accountToken);
             accountRepository.Insert(accountToken);
 
             return new AccountResponse() {
@@ -86,8 +71,12 @@ namespace BooksAppCore.Services
 
         public Account Get(int id)
         {
-           //return accounts.Find(a => a.Id == id);
-            return accountRepository.GetById(id);
+            return accountRepository.GetById(id).Result;
+        }
+
+        public List<Account> SearchAccount(string str)
+        {
+            return accountRepository.Search(str).Result.ToList();
         }
     }
 }

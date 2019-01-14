@@ -102,7 +102,8 @@ namespace BooksInfrastructure.Migrations
                 {
                     b.HasOne("BooksAppCore.Models.Book")
                         .WithMany("Authors")
-                        .HasForeignKey("BookId");
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

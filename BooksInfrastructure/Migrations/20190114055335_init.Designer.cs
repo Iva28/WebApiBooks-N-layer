@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BooksInfrastructure.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20190113102538_init")]
+    [Migration("20190114055335_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -104,7 +104,8 @@ namespace BooksInfrastructure.Migrations
                 {
                     b.HasOne("BooksAppCore.Models.Book")
                         .WithMany("Authors")
-                        .HasForeignKey("BookId");
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,6 @@
 ﻿using BooksAppCore.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace BooksInfrastructure.EF
 {
@@ -11,12 +11,15 @@ namespace BooksInfrastructure.EF
         public DbSet<Account> Accounts { get; set; }
         public DbSet<AccountToken> AccountTokens { get; set; }
 
-        public MyDbContext(DbContextOptions options) : base(options)
-        {
-        }
+        public MyDbContext(DbContextOptions options) : base(options) {  }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+
             modelBuilder.Entity<Account>().HasData(
             new {
                 Id = 1,
@@ -33,7 +36,7 @@ namespace BooksInfrastructure.EF
                 About = "About admin1"
             });
 
-            base.OnModelCreating(modelBuilder); 
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

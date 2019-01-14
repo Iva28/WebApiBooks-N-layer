@@ -1,5 +1,6 @@
 ﻿using BooksAppCore.Models;
 using BooksAppCore.Repositories;
+using Dapper;
 using Dapper.FastCrud;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
@@ -29,13 +30,12 @@ namespace BooksInfrastructure.Repositories
             }
         }
 
-        public async Task<List<Book>> Select()
+        public async Task<IEnumerable<Book>> Select()
         {
             using (IDbConnection dbConnection = Connection)
             {
                 dbConnection.Open();
-                 var res = await dbConnection.FindAsync<Book>();
-                 return res.ToList();
+                return await dbConnection.FindAsync<Book>();
             }
             //return context.Books.ToList(); 
         }
@@ -95,6 +95,26 @@ namespace BooksInfrastructure.Repositories
             }
             //context.Books.Remove(context.Books.Find(id));
             //return context.SaveChanges();
+        }
+
+        public async Task<IEnumerable<Book>> SearchBooks(string str)
+        {
+            var sql = $"SELECT * FROM Books WHERE Title LIKE '{str}%'";
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                return await dbConnection.QueryAsync<Book>(sql);
+            }
+        }
+
+        public async Task<IEnumerable<Author>> SearchAuthors(string str)
+        {
+            var sql = $"SELECT * FROM Authors WHERE FirstName LIKE '{str}%' OR LastName LIKE '{str}%'";
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                return await dbConnection.QueryAsync<Author>(sql);
+            }
         }
     }
 }

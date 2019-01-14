@@ -3,15 +3,15 @@ using BooksAppCore.Repositories;
 using Dapper;
 using Dapper.FastCrud;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace BooksInfrastructure.Repositories
 {
     public class AccountRepository : IAccountRepository
     {
-       // private MyDbContext context;
-
         private readonly IConfiguration _config;
 
         public AccountRepository(IConfiguration config)
@@ -27,49 +27,59 @@ namespace BooksInfrastructure.Repositories
             }
         }
 
-        public int DeleteAllTokens(int id)
+        public async Task<int> DeleteAllTokens(int id)
         {
             using (IDbConnection dbConnection = Connection)
             {
                 dbConnection.Open();
-                return dbConnection.BulkDelete<AccountToken>(statement => statement.Where($"{nameof(AccountToken.AccountId):C}={id}"));
+                return await dbConnection.BulkDeleteAsync<AccountToken>(statement => statement.Where($"{nameof(AccountToken.AccountId):C}={id}"));
             }
         }
 
-        public AccountToken GetToken(string refreshToken)
+        public async Task<AccountToken> GetToken(string refreshToken)
         {
             using (IDbConnection dbConnection = Connection)
             {
                 dbConnection.Open();
-                return dbConnection.Get(new AccountToken { RefreshToken = refreshToken });
+                return await dbConnection.GetAsync(new AccountToken { RefreshToken = refreshToken });
             }
         }
 
-        public void Insert(AccountToken accountToken)
+        public async Task Insert(AccountToken accountToken)
         {
             using (IDbConnection dbConnection = Connection)
             {
                 dbConnection.Open();
-                dbConnection.Insert(accountToken);
+                await dbConnection.InsertAsync(accountToken);
             }
         }
 
-        public Account GetById(int id)
+        public async Task<Account> GetById(int id)
         {
             using (IDbConnection dbConnection = Connection)
             {
                 dbConnection.Open();
-                return dbConnection.Get(new Account { Id = id });
+                return await dbConnection.GetAsync(new Account { Id = id });
             }
         }
 
-        public Account Get(string login, string password)
+        public async Task<Account> Get(string login, string password)
         {
             using (IDbConnection dbConnection = Connection)
             {
                 dbConnection.Open();
-                return dbConnection.QueryFirst<Account>("SELECT * FROM Accounts WHERE Login = @Login AND Password = @Password",
+                return await dbConnection.QueryFirstAsync<Account>("SELECT * FROM Accounts WHERE Login = @Login AND Password = @Password",
                     new { Login = login, Password = password });
+            }
+        }
+
+        public async Task<IEnumerable<Account>> Search(string str)
+        {
+            var q = $"SELECT * FROM Accounts WHERE Login LIKE '{str}%'";
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                return await dbConnection.QueryAsync<Account>(q);
             }
         }
     }

@@ -1,13 +1,16 @@
 ﻿using BooksAppCore.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BooksAppCore.Repositories
 {
     public interface IAccountRepository
     {
-        Account Get(string login, string password);
-        Account GetById(int id);
-        AccountToken GetToken(string refreshToken);
-        int DeleteAllTokens (int id);
-        void Insert(AccountToken accountToken);
+        Task<Account> Get(string login, string password);
+        Task<Account> GetById(int id);
+        Task<AccountToken> GetToken(string refreshToken);
+        Task<int> DeleteAllTokens(int id);
+        Task Insert(AccountToken accountToken);
+        Task<IEnumerable<Account>> Search(string str);
     }
 }

@@ -15,19 +15,23 @@
         body {
             font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
         }
+
         form div {
             display: grid;
             grid-template-columns: 100px 200px auto;
             grid-gap: 10px;
             margin-bottom: 10px;
         }
+
         table {
             border-collapse: collapse;
         }
+
         table, td, th {
             border: 1px solid gray;
             padding: 5px;
         }
+
         #errors {
             color: darkred;
         }
@@ -37,7 +41,7 @@
         <hr />
     </div>
     <div>
-        <br/>
+        <br />
         <form id="signInForm" onsubmit="signIn()">
             <div>
                 <label for="login">Login</label>
@@ -53,7 +57,7 @@
             </div>
         </form>
         <div id="accountInfo"></div>
-        <hr/>
+        <hr />
     </div>
     <div id="bookForm">
         <h5>Create book</h5>
@@ -96,9 +100,22 @@
             <tbody></tbody>
         </table>
     </div>
+    <div>
+        <br />
+        <form id="searchForm" onsubmit="search()">
+            <div>
+                <label>Enter: </label>
+                <input type="text" required id="myInput"/>
+                <input type="submit" value="Search" style="width: 100px;" />
+            </div>
+        </form>
+        <hr />
+    </div>
+    <div id="searchResult">
+
+    </div>
 
     <script>
-
         function showBlocks(isAuth) {
             if (isAuth) {
                 $("#signInForm").hide();
@@ -106,10 +123,12 @@
                 $("#accountInfo").empty();
                 $("#accountInfo").append("<p>" + localStorage["login"] + "</p><button onclick='signOut()'>Sign Out</button>");
                 $("#bookForm").show();
+                $("#searchForm").show();
             } else {
                 $("#signInForm").show();
                 $("#bookForm").hide();
                 $("#accountInfo").hide();
+                $("#searchForm").hide();
             }
         }
 
@@ -141,6 +160,33 @@
             });
         }
 
+        function search() {
+            event.preventDefault();
+            $.ajax({
+                url: "http://localhost:50030/api/home/search?q=" + $("#searchForm #myInput").val(),
+                type: "GET",
+                headers: {
+                    "Authorization": "Bearer " + localStorage["access_token"]
+                },
+                contentType: "application/json",
+                success: function (data) {
+                    console.log(data.accounts);
+                    console.log(data.authors);
+                    console.log(data.books);
+
+                    $("#searchResult").empty;
+                    var ul = document.createElement("ul");
+                    for (var i = 0; i < data.books.length; i++) {
+                        var book = data.books[i].title;
+                        var listItem = document.createElement("li");
+                        listItem.textContent = book;
+                        ul.appendChild(listItem);
+                    }
+                    $("#searchResult").append(ul);
+                }
+            });
+        }
+
         function signOut() {
             $.ajax({
                 url: "http://localhost:50030/api/account/signout",
@@ -168,7 +214,7 @@
                             + "</td><td><button onclick='editBook(" + book.id + ")'>edit</button></td>"
                             + "<td><button onclick='deleteBook(" + book.id + ")'>delete</button></td></tr>");
                     })
-                },  
+                },
                 error: function (data) { alert("error"); }
             });
         }
@@ -196,7 +242,7 @@
                 },
                 success: function (book) {
                     getAllBooks();
-                }
+                },
                 statusCode: {
                     401: function () {
                         if (localStorage["refresh_token"] == undefined) {
@@ -209,7 +255,7 @@
                 }
             });
         }
-        
+
         function submitBookForm() {
             event.preventDefault();
             var method, data;

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BooksAppCore.Models;
-using BooksInfrastructure.Services;
 using BooksAppCore.Services;
 
 namespace WebApiBooks.Controllers
@@ -59,6 +58,5 @@ namespace WebApiBooks.Controllers
         {
             return new JsonResult(bookService.GetAuthors(id));
         }
-
     }
 }

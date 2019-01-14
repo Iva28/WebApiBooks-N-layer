@@ -36,12 +36,11 @@ namespace WebApiBooks
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<MyDbContext>(opts =>
-            //{
-            //    opts.UseSqlServer(Configuration.GetConnectionString("MyConnection"));
-            //});
+            services.AddDbContext<MyDbContext>(opts =>
+            {
+                opts.UseSqlServer(Configuration.GetConnectionString("MyConnection"));
+            });
 
-            //services.AddScoped<DbConnection>((conn) => DbConnection);
             //services.AddDbContext<MyDbContext>(opts => { opts.UseSqlServer(DbConnection); });
 
             services.AddTransient<IJwtService, JwtService>();  

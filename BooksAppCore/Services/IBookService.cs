@@ -12,5 +12,7 @@ namespace BooksAppCore.Services
         void Delete(int id);
         void Delete(Book book);
         List<Author> GetAuthors(int id);
+        List<Book> SearchBook(string str);
+        List<Author> SearchAuthor(string str);
     }
 }
