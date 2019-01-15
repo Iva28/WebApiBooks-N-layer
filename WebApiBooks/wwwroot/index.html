@@ -111,9 +111,7 @@
         </form>
         <hr />
     </div>
-    <div id="searchResult">
-
-    </div>
+    <div id="searchResult"></div>
 
     <script>
         function showBlocks(isAuth) {
@@ -124,11 +122,14 @@
                 $("#accountInfo").append("<p>" + localStorage["login"] + "</p><button onclick='signOut()'>Sign Out</button>");
                 $("#bookForm").show();
                 $("#searchForm").show();
+                $("#searchResult").empty;
+                $("#searchResult").show();
             } else {
                 $("#signInForm").show();
                 $("#bookForm").hide();
                 $("#accountInfo").hide();
                 $("#searchForm").hide();
+                $("#searchResult").hide();
             }
         }
 
@@ -163,7 +164,7 @@
         function search() {
             event.preventDefault();
             $.ajax({
-                url: "http://localhost:50030/api/home/search?q=" + $("#searchForm #myInput").val(),
+                url: "http://localhost:50030/api/home/search/" + $("#searchForm #myInput").val(),
                 type: "GET",
                 headers: {
                     "Authorization": "Bearer " + localStorage["access_token"]

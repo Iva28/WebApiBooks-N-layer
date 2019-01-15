@@ -16,8 +16,8 @@ namespace WebApiBooks.Controllers
             this.bookService = bookService;
         }
 
-        [HttpGet]
-        public IActionResult Search([FromQuery]string q)
+        [HttpGet("{q}")]
+        public IActionResult Search(string q)
         {
             var accounts = accountService.SearchAccount(q);
             var books = bookService.SearchBook(q);
