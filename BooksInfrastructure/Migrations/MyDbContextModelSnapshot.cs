@@ -36,11 +36,6 @@ namespace BooksInfrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Accounts");
-
-                    b.HasData(
-                        new { Id = 1, About = "About user1", Login = "user1", Password = "1111", Role = "user" },
-                        new { Id = 2, About = "About admin1", Login = "admin1", Password = "1111", Role = "admin" }
-                    );
                 });
 
             modelBuilder.Entity("BooksAppCore.Models.AccountToken", b =>
@@ -102,8 +97,7 @@ namespace BooksInfrastructure.Migrations
                 {
                     b.HasOne("BooksAppCore.Models.Book")
                         .WithMany("Authors")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("BookId");
                 });
 #pragma warning restore 612, 618
         }

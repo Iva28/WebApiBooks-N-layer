@@ -20,7 +20,13 @@ namespace BooksAppCore.Services
         {
             this.authOptions = authOptions.Value;
             this.jwtService = jwtService;
-            this.accountRepository = accountRepository;           
+            this.accountRepository = accountRepository;
+
+            if (accountRepository.Select().Result.Count() == 0)
+            {
+                accountRepository.Insert(new Account { Login = "user1", Password = "1111", Role = "user", About = "About user1" });
+                accountRepository.Insert(new Account { Login = "admin1", Password = "1111", Role = "admin", About = "About admin1" });
+            }
         }
 
         public AccountResponse SignIn(string login, string pswd)

@@ -35,6 +35,10 @@
         #errors {
             color: darkred;
         }
+
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0px 1000px white inset;
+        }
     </style>
     <div>
         <h3>Site about books!</h3>
@@ -100,20 +104,20 @@
             <tbody></tbody>
         </table>
     </div>
+    <hr />
     <div>
         <br />
         <form id="searchForm" onsubmit="search()">
-            <div>
-                <label>Enter: </label>
-                <input type="text" required id="myInput"/>
-                <input type="submit" value="Search" style="width: 100px;" />
-            </div>
+            <input type="search" required id="myInput" />
+            <input type="submit" value="Search" style="width: 100px;" />
         </form>
-        <hr />
     </div>
-    <div id="searchResult"></div>
+    <div id="searchResult">
+
+    </div>
 
     <script>
+
         function showBlocks(isAuth) {
             if (isAuth) {
                 $("#signInForm").hide();
@@ -122,18 +126,19 @@
                 $("#accountInfo").append("<p>" + localStorage["login"] + "</p><button onclick='signOut()'>Sign Out</button>");
                 $("#bookForm").show();
                 $("#searchForm").show();
-                $("#searchResult").empty;
                 $("#searchResult").show();
             } else {
                 $("#signInForm").show();
                 $("#bookForm").hide();
                 $("#accountInfo").hide();
                 $("#searchForm").hide();
+                $("#searchResult").empty();
                 $("#searchResult").hide();
             }
         }
 
         $("document").ready(function () {
+            event.preventDefault();
             if (localStorage["access_token"]) {
                 showBlocks(true);
             } else {
@@ -171,24 +176,49 @@
                 },
                 contentType: "application/json",
                 success: function (data) {
-                    console.log(data.accounts);
-                    console.log(data.authors);
-                    console.log(data.books);
+                    $("#searchResult").children().remove();
 
-                    $("#searchResult").empty;
-                    var ul = document.createElement("ul");
-                    for (var i = 0; i < data.books.length; i++) {
-                        var book = data.books[i].title;
-                        var listItem = document.createElement("li");
-                        listItem.textContent = book;
-                        ul.appendChild(listItem);
+                    $("#searchResult").append("<h4>Accounts (" + data.accounts.length + ")</h4>");
+                    if (data.accounts.length != 0) {
+                        var ul_acc = document.createElement("ul");
+                        for (var i = 0; i < data.accounts.length; i++) {
+                            var acc = data.accounts[i].login;
+                            var listItem = document.createElement("li");
+                            listItem.textContent = acc;
+                            ul_acc.appendChild(listItem);
+                        }
+                        $("#searchResult").append(ul_acc);
                     }
-                    $("#searchResult").append(ul);
+
+                    $("#searchResult").append("<h4>Books (" + data.books.length + ")</h4>");
+                    if (data.books.length != 0) {
+                        var ul_books = document.createElement("ul");
+                        for (var i = 0; i < data.books.length; i++) {
+                            var book = data.books[i].title;
+                            var listItem = document.createElement("li");
+                            listItem.textContent = book;
+                            ul_books.appendChild(listItem);
+                        }
+                        $("#searchResult").append(ul_books);
+                    }
+
+                    $("#searchResult").append("<h4>Authors (" + data.authors.length + ")</h4>");
+                    if (data.authors.length != 0) {
+                        var ul_authors = document.createElement("ul");
+                        for (var i = 0; i < data.authors.length; i++) {
+                            var author = data.authors[i].firstName + " " + data.authors[i].lastName;
+                            var listItem = document.createElement("li");
+                            listItem.textContent = author;
+                            ul_authors.appendChild(listItem);
+                        }
+                        $("#searchResult").append(ul_authors);
+                    }
                 }
             });
         }
 
         function signOut() {
+            event.preventDefault();
             $.ajax({
                 url: "http://localhost:50030/api/account/signout",
                 method: "POST",
@@ -204,6 +234,7 @@
         }
 
         function getAllBooks() {
+            event.preventDefault();
             $.ajax({
                 url: "http://localhost:50030/api/book",
                 method: "GET",
@@ -221,6 +252,7 @@
         }
 
         function editBook(id) {
+            event.preventDefault();
             $.ajax({
                 url: "http://localhost:50030/api/book/" + id,
                 method: "GET",
@@ -234,6 +266,7 @@
         }
 
         function deleteBook(id) {
+            event.preventDefault();
             $.ajax({
                 url: "http://localhost:50030/api/book/" + id,
                 method: "DELETE",
@@ -300,6 +333,7 @@
         }
 
         function updateToken(callback) {
+            event.preventDefault();
             $.ajax({
                 url: "http://localhost:50030/api/account/token",
                 method: "POST",

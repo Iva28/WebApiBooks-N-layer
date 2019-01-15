@@ -19,6 +19,7 @@ namespace WebApiBooks.Controllers
         [HttpGet("{q}")]
         public IActionResult Search(string q)
         {
+            if (q.Length < 2) return BadRequest(); 
             var accounts = accountService.SearchAccount(q);
             var books = bookService.SearchBook(q);
             var authors = bookService.SearchAuthor(q);

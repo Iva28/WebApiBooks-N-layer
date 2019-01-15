@@ -10,12 +10,10 @@ using System.Collections.Generic;
 using BooksInfrastructure.Services;
 using BooksAppCore.Services;
 using BooksAppCore;
-using BooksInfrastructure.EF;
-using Microsoft.EntityFrameworkCore;
 using BooksAppCore.Repositories;
 using BooksInfrastructure.Repositories;
-using System.Data.Common;
-using System.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using BooksInfrastructure.EF;
 
 namespace WebApiBooks
 {
@@ -31,17 +29,12 @@ namespace WebApiBooks
 
         public IConfiguration Configuration { get; }
 
-        public DbConnection DbConnection => new SqlConnection(Configuration.GetConnectionString("MyConnection"));
-
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<MyDbContext>(opts =>
             {
                 opts.UseSqlServer(Configuration.GetConnectionString("MyConnection"));
             });
-
-            //services.AddDbContext<MyDbContext>(opts => { opts.UseSqlServer(DbConnection); });
 
             services.AddTransient<IJwtService, JwtService>();  
             services.AddTransient<IBookService, BookService>();
@@ -102,6 +95,7 @@ namespace WebApiBooks
             app.UseAuthentication();
 
             app.UseSwagger();
+
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Book API v1");

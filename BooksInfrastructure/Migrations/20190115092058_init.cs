@@ -75,16 +75,6 @@ namespace BooksInfrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Accounts",
-                columns: new[] { "Id", "About", "Login", "Password", "Role" },
-                values: new object[] { 1, "About user1", "user1", "1111", "user" });
-
-            migrationBuilder.InsertData(
-                table: "Accounts",
-                columns: new[] { "Id", "About", "Login", "Password", "Role" },
-                values: new object[] { 2, "About admin1", "admin1", "1111", "admin" });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Authors_BookId",
                 table: "Authors",

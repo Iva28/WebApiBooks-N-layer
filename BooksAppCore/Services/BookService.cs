@@ -45,7 +45,7 @@ namespace BooksAppCore.Services
 
         public Book Insert(Book book)
         {
-            bookRepository.Insert(book);
+            bookRepository.Insert(book);         
             return book;
         }
 

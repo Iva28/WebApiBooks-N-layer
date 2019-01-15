@@ -27,6 +27,16 @@ namespace BooksInfrastructure.Repositories
             }
         }
 
+
+        public async Task<IEnumerable<Account>> Select()
+        {
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                return await dbConnection.FindAsync<Account>();
+            }
+        }
+
         public async Task<int> DeleteAllTokens(int id)
         {
             using (IDbConnection dbConnection = Connection)
@@ -80,6 +90,15 @@ namespace BooksInfrastructure.Repositories
             {
                 dbConnection.Open();
                 return await dbConnection.QueryAsync<Account>(q);
+            }
+        }
+
+        public async Task Insert(Account account)
+        {
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                await dbConnection.InsertAsync(account);
             }
         }
     }

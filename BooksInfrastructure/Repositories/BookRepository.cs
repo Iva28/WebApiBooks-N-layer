@@ -6,15 +6,13 @@ using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BooksInfrastructure.Repositories
 {
     public class BookRepository : IBookRepository
     {
-        //private MyDbContext context;
-       
+      
         private readonly IConfiguration _config;
 
         public BookRepository(IConfiguration config)
@@ -37,7 +35,6 @@ namespace BooksInfrastructure.Repositories
                 dbConnection.Open();
                 return await dbConnection.FindAsync<Book>();
             }
-            //return context.Books.ToList(); 
         }
 
         public async Task<Book> Select(int id)
@@ -47,7 +44,6 @@ namespace BooksInfrastructure.Repositories
                 dbConnection.Open();
                 return await dbConnection.GetAsync<Book>(new Book { Id = id });
             }
-            //return context.Books.Find(id);
         }
 
         public async Task Insert(Book book)
@@ -56,9 +52,13 @@ namespace BooksInfrastructure.Repositories
             {
                 dbConnection.Open();
                 await dbConnection.InsertAsync(book);
+
+                if (book.Authors.Count != 0) {
+                    foreach (var a in book.Authors) {
+                        await dbConnection.InsertAsync(a);
+                    }
+                }
             }
-            //context.Books.Add(book);
-            //return context.SaveChanges();
         }
 
         public async Task<bool> Update(Book book)
@@ -68,11 +68,6 @@ namespace BooksInfrastructure.Repositories
                 dbConnection.Open();
                 return await dbConnection.UpdateAsync<Book>(book);
             }
-
-            //Book editBook = context.Books.Find(book.Id);
-            //editBook.Title = book.Title;
-            //editBook.Year = book.Year;
-            //return context.SaveChanges();
         }
 
         public async Task<bool> Delete(Book book)
@@ -82,8 +77,6 @@ namespace BooksInfrastructure.Repositories
                 dbConnection.Open();
                 return await dbConnection.DeleteAsync<Book>(book);
             }
-            //context.Books.Remove(book);
-            //return context.SaveChanges();
         }
 
         public async Task<bool> Delete(int id)
@@ -93,8 +86,6 @@ namespace BooksInfrastructure.Repositories
                 dbConnection.Open();
                 return await dbConnection.DeleteAsync(new Book { Id = id });
             }
-            //context.Books.Remove(context.Books.Find(id));
-            //return context.SaveChanges();
         }
 
         public async Task<IEnumerable<Book>> SearchBooks(string str)
