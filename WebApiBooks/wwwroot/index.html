@@ -138,7 +138,6 @@
         }
 
         $("document").ready(function () {
-            event.preventDefault();
             if (localStorage["access_token"]) {
                 showBlocks(true);
             } else {
@@ -234,7 +233,6 @@
         }
 
         function getAllBooks() {
-            event.preventDefault();
             $.ajax({
                 url: "http://localhost:50030/api/book",
                 method: "GET",
