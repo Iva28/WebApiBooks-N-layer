@@ -255,6 +255,9 @@
                 url: "http://localhost:50030/api/book/" + id,
                 method: "GET",
                 contentType: "application/json",
+                headers: {
+                    "Authorization": "Bearer " + localStorage["access_token"]
+                },
                 success: function (book) {
                     $("#id").val(book.id);
                     $("#title").val(book.title);
@@ -273,7 +276,9 @@
                     "Authorization": "Bearer " + localStorage["access_token"]
                 },
                 success: function (book) {
-                    getAllBooks();
+                    setTimeout(function () {
+                        getAllBooks();
+                    }, 1000); 
                 },
                 statusCode: {
                     401: function () {
@@ -319,7 +324,9 @@
                     $("#id").val("");
                     $("#title").val("");
                     $("#year").val("");
-                    getAllBooks();
+                    setTimeout(function () {
+                        getAllBooks();
+                    }, 1000); 
                 },
                 statusCode: {
                     401: function () {

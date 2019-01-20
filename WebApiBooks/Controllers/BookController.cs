@@ -22,6 +22,7 @@ namespace WebApiBooks.Controllers
             return new JsonResult(bookService.Get());
         }
 
+        [Authorize]
         [HttpGet("{id}")] // api/book/5
         public IActionResult Get(int id)
         {
@@ -52,8 +53,8 @@ namespace WebApiBooks.Controllers
             return StatusCode(204);
         }
 
-        // api/book/1/authors
-        [HttpGet("{id}/authors")]
+        [Authorize]
+        [HttpGet("{id}/authors")] // api/book/1/authors
         public IActionResult Authors(int id)
         {
             return new JsonResult(bookService.GetAuthors(id));
